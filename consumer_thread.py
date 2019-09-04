@@ -28,7 +28,7 @@ class ConsumerThread(threading.Thread):
                 return
 
             cnt += 1
-            if cnt == 5:
+            if cnt == 1000:
                 elapsed_time = time.time() - start
                 print("%s : %0.2f rate/s" % (self._topic, cnt / elapsed_time))
                 cnt = 0

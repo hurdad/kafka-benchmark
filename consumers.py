@@ -44,7 +44,7 @@ def main():
 
     # benchmark params
     kafka_url = "localhost:9092"
-    num_consumers = 1
+    num_consumers = 4
 
     # array to hold threads
     threads = []

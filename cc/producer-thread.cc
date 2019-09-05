@@ -23,22 +23,22 @@ void* ProducerThread::run() {
 	size_t cnt = 0;
 	auto start = std::chrono::steady_clock::now();
 
-
 	while (!m_shutdown) {
 		producer_->produce(
-				cppkafka::MessageBuilder(topic_).partition(0).payload(
-						message));
+				cppkafka::MessageBuilder(topic_).partition(0).payload(message));
 		usleep(5000);
 
-		if (flush_cnt++ == 1000){
+		if (flush_cnt++ == 1000) {
 			producer_->flush();
 			flush_cnt = 0;
 		}
 
-		if(cnt++ == 1000){
+		if (cnt++ == 1000) {
 			auto end = std::chrono::steady_clock::now();
-			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-			QLOG(logINFO) << topic_ << " rate : " << (float)cnt / (float)duration * 1000000 << std::endl;
+			auto duration = std::chrono::duration_cast
+					< std::chrono::microseconds > (end - start).count();
+			QLOG(logINFO) << topic_ << " rate : "
+					<< (float) cnt / (float) duration * 1000000 << std::endl;
 
 			cnt = 0;
 			start = std::chrono::steady_clock::now();

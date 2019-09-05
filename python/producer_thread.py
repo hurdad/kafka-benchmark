@@ -30,13 +30,13 @@ class ProducerThread(threading.Thread):
 
             self._producer.send(self._topic, data)
             cnt += 1
-            if cnt == 1000:
+            if cnt == 5:
                 elapsed_time = time.time() - start
                 print("%s : %0.2f rate/s : %0.2f bytes/s" % (self._topic, cnt / elapsed_time, self._msg_bytes_size*cnt/elapsed_time))
                 cnt = 0
                 start = time.time()
 
-            time.sleep(0.005)
+            time.sleep(1)
 
     def join(self, timeout=None):
         self._stopevent.set()

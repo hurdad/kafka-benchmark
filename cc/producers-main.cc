@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
 	//benchmark params
 	std::string kafka_url = "localhost:9092";
 	size_t num_producers = 4;
-	size_t msg_bytes_size = 500;
+	size_t msg_bytes_size = 100 * 1024;
 
 	// start threads
 	std::vector<ProducerThread*> threads;

@@ -37,6 +37,9 @@ void* ConsumerThread::run() {
 
 	QLOG(logINFO) << "Consuming messages from topic " << topic_ << std::endl;
 
+	size_t cnt = 0;
+	auto start = std::chrono::steady_clock::now();
+
 	// Now read lines and write them into kafka
 	while (!m_shutdown) {
 		// Try to consume a message
@@ -55,9 +58,22 @@ void* ConsumerThread::run() {
 					QLOG(logINFO) << msg.get_key() << " -> ";
 				}
 				// Print the payload
-				QLOG(logINFO) << msg.get_payload() << std::endl;
+				//QLOG(logINFO) << msg.get_payload() << std::endl;
 				// Now commit the message
 				consumer_->commit(msg);
+
+
+				// print rate stats
+				if (cnt++ == 1000) {
+					auto end = std::chrono::steady_clock::now();
+					auto duration = std::chrono::duration_cast
+							< std::chrono::microseconds > (end - start).count();
+					QLOG(logINFO) << topic_ << " rate : "
+							<< (float) cnt / (float) duration * 1000000 << std::endl;
+
+					cnt = 0;
+					start = std::chrono::steady_clock::now();
+				}
 			}
 		}
 	}

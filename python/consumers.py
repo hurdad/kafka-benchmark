@@ -49,7 +49,7 @@ def main():
     threads = []
 
     for x in range(0, num_consumers):
-        thr = consumer_thread.ConsumerThread(str(x), kafka_url, 'test')
+        thr = consumer_thread.ConsumerThread(str(x), kafka_url, '3')
         thr.start()
         threads.append(thr)
 

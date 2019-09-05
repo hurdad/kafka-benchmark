@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
 	// start threads
 	std::vector<ConsumerThread*> threads;
 	for (size_t i = 0; i < num_consumers; i++) {
-		ConsumerThread* thr = new ConsumerThread(std::to_string(i), kafka_url, "cpp");
+		ConsumerThread* thr = new ConsumerThread(std::to_string(i), kafka_url, "2");
 		if (thr != NULL && thr->start() != 0) {
 			throw std::runtime_error("Thread failed to start!");
 		}

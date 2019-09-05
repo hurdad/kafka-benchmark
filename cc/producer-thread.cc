@@ -2,7 +2,8 @@
 
 ProducerThread::ProducerThread(std::string topic, std::string kafka_url,
 		size_t msg_bytes_size) :
-		topic_(topic) {
+		topic_(topic),
+		msg_bytes_size_(msg_bytes_size){
 
 	// Create the config
 	cppkafka::Configuration config = { { "metadata.broker.list", kafka_url } };
@@ -17,22 +18,26 @@ ProducerThread::~ProducerThread() {
 }
 
 void* ProducerThread::run() {
-
-	std::string message = "hey there!";
 	size_t flush_cnt = 0;
 	size_t cnt = 0;
 	auto start = std::chrono::steady_clock::now();
 
+    // build payload vector / buffer
+	std::vector<cppkafka::Buffer::DataType> vec(msg_bytes_size_);
+	cppkafka::Buffer payload(vec);
+
 	while (!m_shutdown) {
 		producer_->produce(
-				cppkafka::MessageBuilder(topic_).partition(0).payload(message));
-		usleep(5000);
+				cppkafka::MessageBuilder(topic_).partition(0).payload(payload));
+		usleep(2000);
 
+		// flush
 		if (flush_cnt++ == 1000) {
 			producer_->flush();
 			flush_cnt = 0;
 		}
 
+		// print rate stats
 		if (cnt++ == 1000) {
 			auto end = std::chrono::steady_clock::now();
 			auto duration = std::chrono::duration_cast
@@ -42,7 +47,6 @@ void* ProducerThread::run() {
 
 			cnt = 0;
 			start = std::chrono::steady_clock::now();
-
 		}
 	}
 

@@ -5,9 +5,8 @@
 import time
 import signal
 import logging
-import os
 
-import consumer_thread
+from python import consumer_thread
 
 m_shutdown = 0  # global shutdown variable
 logger = logging.getLogger(__name__)

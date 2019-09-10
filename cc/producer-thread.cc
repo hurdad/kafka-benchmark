@@ -6,7 +6,10 @@ ProducerThread::ProducerThread(std::string topic, std::string kafka_url,
 		msg_bytes_size_(msg_bytes_size){
 
 	// Create the config
-	cppkafka::Configuration config = { { "metadata.broker.list", kafka_url } };
+	cppkafka::Configuration config = { 
+		{ "metadata.broker.list", kafka_url } ,
+    	{ "compression.codec", "snappy" }
+	};
 
 	// Create the producer
 	producer_ = new cppkafka::Producer(config);
@@ -24,16 +27,21 @@ void* ProducerThread::run() {
 
     // build payload vector / buffer
 	std::vector<cppkafka::Buffer::DataType> vec(msg_bytes_size_);
+	std::generate(vec.begin(), vec.end(), std::rand);
 	cppkafka::Buffer payload(vec);
 
 	while (!m_shutdown) {
 		producer_->produce(
 				cppkafka::MessageBuilder(topic_).partition(0).payload(payload));
-		usleep(2000);
+		usleep(5000);
 
 		// flush
 		if (flush_cnt++ == 1000) {
-			producer_->flush();
+			try {
+				producer_->flush();
+			} catch (std::exception& e) {
+				QLOG(logERROR) << topic_ << e.what() << std::endl;
+			}
 			flush_cnt = 0;
 		}
 
